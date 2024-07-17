@@ -1,0 +1,24 @@
+# range for auv motion over time
+
+def auv_motion(mass, self, T, L, l, dt, t, x0, y0, theta0, alpha):
+        n = len(t)
+        x = np.zeros(n)
+        y = np.zeros(n)
+        theta = np.zeros(n)
+        v = np.zeros((n, 2))
+        omega = np.zeros(n)
+        a = np.zeros((n, 2))
+
+        x[0], y[0], theta[0] = x0, y0, theta0
+
+        for i in range(1, n):
+            a[i] = self.calculate_auv2_acceleration(T, alpha, theta[i-1], mass)
+            omega[i] = self.calculate_auv2_angular_acceleration(T, alpha, L, l)
+
+            v[i] = v[i-1] + a[i] * dt
+            theta[i] = theta[i-1] + omega[i] * dt
+
+            x[i] = x[i-1] + v[i, 0] * dt
+            y[i] = y[i-1] + v[i, 1] * dt
+
+        return x, y, theta, v, omega, a
